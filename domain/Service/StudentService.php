@@ -1,14 +1,14 @@
 <?php
 namespace domain\Service;
 
-use App\Models\student;
+use App\Models\Student;
 
 class StudentService{
 
     protected $student;
 
     public function __construct(){
-        $this->student=new student();
+        $this->student=new Student();
     }
 
     public function get(){
