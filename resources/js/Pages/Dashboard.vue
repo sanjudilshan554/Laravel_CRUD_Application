@@ -15,10 +15,9 @@
                     <section class="p-3">
                         <!-- table -->
                         <section>
-
                             <button type="button" class="btn btn-success mt-3" data-bs-toggle="modal"
                                 data-bs-target="#exampleModal" @click="showImgUsr()">
-                                Add New User
+                                Add New Student
                             </button>
                         </section>
                         <section>
@@ -43,7 +42,10 @@
                                         <td> <img :src="student.url" alt="profile image not setup"
                                                 class="profile_image align-middle "></td>
                                         <td class="align-middle ">{{ student.age }}</td>
-                                        <td class="align-middle ">{{ student.status }}</td>
+                                        <td class="align-middle status">
+                                            <span v-if="student.status == 1" class="badge rounded-pill bg-success sub">active</span>
+                                            <span v-else class="badge rounded-pill bg-secondary sub">inactive</span>
+                                        </td>
                                         <td class="align-middle ">
 
                                             <button type="button" class="fa fa-pencil btn btn-primary buttons"
@@ -68,14 +70,15 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content ">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Add New User</h5>
+                                            <h5 v-if="confirmGreen.status == 202"  class="modal-title" id="exampleModalLabel">Add New Student</h5>
+                                            <h5 v-else-if="confirmGreen.status == 201" class="modal-title" id="exampleModalLabel">Edit Existing Student Details</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body row ">
                                             <div class="confirm_message text-center">
 
-                                                <div v-if="confirmGreen.status == 202" class="alert alert-success"
+                                                <div v-if="confirmGreen.status == 202" class="alert alert-info"
                                                     role="alert">
                                                     {{ confirmGreen.message }}
                                                 </div>
@@ -183,7 +186,7 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <input type="file" class="form-control" v-on:change="onImageChange"
-                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
+                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()"/>
                                                     </div>
                                                 </div>
 
@@ -196,7 +199,10 @@
                                                         <input class="form-check-input" v-model="student.status" type="checkbox" role="switch"
                                                             id="flexSwitchCheckDefault"
                                                             true-value="1" false-value="0">
-                                                        <label class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
+                                                        <!-- <label v-show="!student.status" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
+                                                        <label v-show="student.status" class="form-check-label" for="flexSwitchCheckDefault">Active modde</label> -->
+                                                        <label v-if="student.status == 0" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
+                                                        <label v-else class="form-check-label active-label" for="flexSwitchCheckDefault">Active mode</label>
                                                     </div>
                                                     </div>
                                                     
@@ -343,7 +349,7 @@ export default {
                 this.student.image = response.data.url;
                 this.ShowImgSrc = 1;
                 this.confirmGreen.status = 201;
-                this.confirmGreen.message = "Edit user data";
+                this.confirmGreen.message = "You can update details with flexibility";
                 this.student.id = id;
             } catch (error) {
                 console.log('Error:', error);
@@ -353,7 +359,7 @@ export default {
         async showImgUsr() {
             this.ShowImgSrc = 0;
             this.confirmGreen.status = 202;
-            this.confirmGreen.message = "Enter New User Data";
+            this.confirmGreen.message = "Use appropriate file types.";
 
             this.DataReset();
         },
@@ -451,5 +457,22 @@ export default {
 .form-check-label{
     color: #e70000;
     margin-left: 1rem;
+}
+
+.status {
+    text-align: center;
+}
+
+.sub {
+    width: 4rem;
+    height: 2rem;
+    display: flex; /* Added */
+    align-items: center; /* Added */
+    justify-content: center; /* Added */
+    margin: auto;
+}
+
+.active-label{
+    color: rgb(26, 102, 7);
 }
 </style>
