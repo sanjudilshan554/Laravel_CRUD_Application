@@ -41,7 +41,8 @@
                                                 class="profile_image align-middle "></td>
                                         <td class="align-middle ">{{ student.age }}</td>
                                         <td class="align-middle status">
-                                            <span v-if="student.status == 1" class="badge rounded-pill bg-success sub">active</span>
+                                            <span v-if="student.status == 1"
+                                                class="badge rounded-pill bg-success sub">active</span>
                                             <span v-else class="badge rounded-pill bg-secondary sub">inactive</span>
                                         </td>
                                         <td class="align-middle ">
@@ -68,15 +69,17 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content ">
                                         <div class="modal-header">
-                                            <h5 v-if="confirmGreen.status == 202"  class="modal-title" id="exampleModalLabel">Add New Student</h5>
-                                            <h5 v-else-if="confirmGreen.status == 201" class="modal-title" id="exampleModalLabel">Edit Existing Student Details</h5>
+                                            <h5 v-if="confirmGreen.status == 202" class="modal-title"
+                                                id="exampleModalLabel">Add New Student</h5>
+                                            <h5 v-else-if="confirmGreen.status == 201" class="modal-title"
+                                                id="exampleModalLabel">Edit Existing Student Details</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body row ">
                                             <div class="confirm_message text-center">
 
-                                                <div v-if="confirmGreen.status == 202" class="alert alert-info"
+                                                <div v-if="confirmGreen.status == 206" class="alert alert-info"
                                                     role="alert">
                                                     {{ confirmGreen.message }}
                                                 </div>
@@ -98,8 +101,10 @@
                                                 </div>
                                             </div>
 
+                                       
+                                                  
                                             <!-- Register Form -->
-                                            <form v-if="confirmGreen.status == 202" @submit.prevent="NewStudent()">
+                                            <form v-if="confirmGreen.forms == 100" @submit.prevent="NewStudent()">
                                                 <div class="profile ">
 
                                                     <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
@@ -147,7 +152,7 @@
                                             </form>
 
                                             <!-- Update Form -->
-                                            <form v-else-if="confirmGreen.status == 201"
+                                            <form v-else-if="confirmGreen.forms == 50"
                                                 @submit.prevent="UpdateStudent(this.student.id)">
                                                 <div class="profile ">
 
@@ -184,7 +189,7 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <input type="file" class="form-control" v-on:change="onImageChange"
-                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()"/>
+                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
                                                     </div>
                                                 </div>
 
@@ -194,22 +199,25 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
-                                                        <input class="form-check-input" v-model="student.status" type="checkbox" role="switch"
-                                                            id="flexSwitchCheckDefault"
-                                                            true-value="1" false-value="0">
-                                                        <!-- <label v-show="!student.status" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
+                                                            <input class="form-check-input" v-model="student.status"
+                                                                type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                                                                true-value="1" false-value="0">
+                                                            <!-- <label v-show="!student.status" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
                                                         <label v-show="student.status" class="form-check-label" for="flexSwitchCheckDefault">Active modde</label> -->
-                                                        <label v-if="student.status == 0" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
-                                                        <label v-else class="form-check-label active-label" for="flexSwitchCheckDefault">Active mode</label>
+                                                            <label v-if="student.status == 0" class="form-check-label"
+                                                                for="flexSwitchCheckDefault">The user's status is inactive
+                                                                by default.</label>
+                                                            <label v-else class="form-check-label active-label"
+                                                                for="flexSwitchCheckDefault">Active mode</label>
+                                                        </div>
                                                     </div>
-                                                    </div>
-                                                    
+
                                                 </div>
 
                                                 <div class="modal-footer mt-2">
                                                     <div class="modal">
                                                         <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal" >Close</button>
+                                                            data-bs-dismiss="modal">Close</button>
                                                     </div>
                                                     <button type="submit" class="btn btn-primary">Update Student</button>
                                                 </div>
@@ -264,15 +272,14 @@ export default {
 
             ShowImgSrc: '',
 
-
         };
     },
 
-    computed:{
-        isStatusInactive(){
-            return this.student.status !==1;
+    computed: {
+        isStatusInactive() {
+            return this.student.status !== 1;
         }
-    },  
+    },
 
     methods: {
 
@@ -295,23 +302,34 @@ export default {
         },
 
         async NewStudent() {
+          
             try {
                 const config = {
                     headers: { "content-type": "multipart/form-data" },
                 };
 
                 // post response to back end
-                const response = await axios.post(route('student.store'), this.student, config);
-                this.confirmGreen = response.data; // assign response to preview messages 
-
-                this.DataReset();
-
-                // calling function to update page table
-                this.studenDetails();
-                this.confirmGreen.status = 202;
+                await axios.post(route('student.store'), this.student, config).then((response) => {    
+                    this.confirmGreen.status = 202;
+                    this.studenDetails(); 
+                    this.confirmGreen.message=response.data.message;
+                    
+                }).catch((error) => {
+                    this.confirmGreen.status = 500;
+                    const message= error.response.data.message;
+                    this.errorMessageCenter(message);
+                    this.confirmGreen.status == 202;
+                    console.error(error.response.data.message);
+                 
+                });
             } catch (error) {
                 console.log('Error:', error);
             }
+        },
+
+        errorMessageCenter(message){
+            this.confirmGreen.status = 500;
+            this.confirmGreen.message=message;
         },
 
         onImageChange(e) {
@@ -341,23 +359,27 @@ export default {
         },
 
         async EditStudent(id) {
+         
             try {
                 const response = await axios.get(route('student.get_one', id));
                 this.student = response.data.data;
                 this.student.image = response.data.url;
                 this.ShowImgSrc = 1;
                 this.confirmGreen.status = 201;
-                this.confirmGreen.message = "You can update details with flexibility";
+                this.confirmGreen.forms= 50;
+                this.confirmGreen.message = "Tips: You can update details with flexibility";
                 this.student.id = id;
             } catch (error) {
                 console.log('Error:', error);
+               
             }
         },
 
         async showImgUsr() {
             this.ShowImgSrc = 0;
             this.confirmGreen.status = 202;
-            this.confirmGreen.message = "Use appropriate file types.";
+            this.confirmGreen.forms = 100;
+            this.confirmGreen.message = "Tips: Use appropriate file types.";
 
             this.DataReset();
         },
@@ -373,13 +395,16 @@ export default {
                     headers: { "content-type": "multipart/form-data" },
                 };
 
-                const response = await axios.post(route('student.update', id), this.student, config);
-                console.log(response);
-                this.studenDetails();
-                this.confirmGreen.status = 203;
-                this.confirmGreen.status = 201;
-                this.confirmGreen.message =response.data.message;
-        
+                const response = await axios.post(route('student.update', id), this.student, config).then((response =>{
+                    console.log(response);
+                    this.studenDetails();
+                    this.confirmGreen.status = 203;
+                    this.confirmGreen.status = 201;
+                    this.confirmGreen.message = response.data.message;
+                })).catch((error)=>{
+                    console.error(response.data.error);
+                });
+                
             } catch (error) {
                 console.log('Error:', error);
             }
@@ -437,22 +462,23 @@ export default {
     margin-left: 1vh;
 }
 
-.form-switch .form-check-input{
+.form-switch .form-check-input {
     width: 2.5rem;
     height: 1.2rem;
 }
 
-.form-switch .form-check-input:checked{
+.form-switch .form-check-input:checked {
     background-color: rgb(0, 241, 32);
-    border:none;
+    border: none;
 }
 
 
-.form-switch .form-check-input:checked + .form-check-label::before {
-    background-color: #e70000; /* Change to your desired color */
+.form-switch .form-check-input:checked+.form-check-label::before {
+    background-color: #e70000;
+    /* Change to your desired color */
 }
 
-.form-check-label{
+.form-check-label {
     color: #e70000;
     margin-left: 1rem;
 }
@@ -464,13 +490,15 @@ export default {
 .sub {
     width: 4rem;
     height: 2rem;
-    display: flex; /* Added */
-    align-items: center; /* Added */
-    justify-content: center; /* Added */
+    display: flex;
+    /* Added */
+    align-items: center;
+    /* Added */
+    justify-content: center;
+    /* Added */
     margin: auto;
 }
 
-.active-label{
+.active-label {
     color: rgb(26, 102, 7);
-}
-</style>
+}</style>

@@ -13,6 +13,6 @@ class NameValidationRule implements Rule
 
     // retrun error message 
     public function message(){
-        return "the maximum charater is 30 and must be character value";
+        return "The value must be contain only letters";
     }
 }

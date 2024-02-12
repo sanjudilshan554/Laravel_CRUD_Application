@@ -63,7 +63,7 @@ class StudentService
                     'age' => $validated['age'],
                 ]);
 
-                return response()->json(['status' => '200', 'message' => 'Created new account successfully : Keep in mind to update profile photo']);
+                return response()->json(['status' => '200', 'message' => 'Created new account successfully : Keep on mind to update profile image later']);
             }
         }else{
             return response()->json(['status'=> '400', 'message'=> 'Bad Data']);

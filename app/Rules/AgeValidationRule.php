@@ -14,7 +14,7 @@ class AgeValidationRule implements Rule
     }
 
     public function message(){
-        return "the value must be interger & less than 150";
+        return "the value must be contain numbers and less than 150";
     }
 
 }
