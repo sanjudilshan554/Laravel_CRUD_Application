@@ -87,6 +87,10 @@
                                                     role="alert">
                                                     {{ confirmGreen.message }}
                                                 </div>
+                                                <div v-else-if="confirmGreen.status == 203" class="alert alert-warning"
+                                                    role="alert">
+                                                    {{ confirmGreen.message }}
+                                                </div>
                                                 <div v-else class="alert alert-primary " role="alert"
                                                     value="Insert your data">
                                                     {{ confirmGreen.message }}
@@ -281,7 +285,7 @@ export default {
             //resetting fields 
             this.student.name = '';
             this.student.age = '';
-            this.student.image = '';
+            this.student.image = null;
             this.previewImage = null; // reset the image preview 
             this.$refs.fileInput.value = ''; //reset the image selection
         },
@@ -367,9 +371,11 @@ export default {
 
                 const response = await axios.post(route('student.update', id), this.student, config);
                 console.log(response);
-                this.DataReset();
                 this.studenDetails();
-                return response;
+                this.confirmGreen.status = 203;
+                this.confirmGreen.status = 201;
+                this.confirmGreen.message =response.data.message;
+        
             } catch (error) {
                 console.log('Error:', error);
             }

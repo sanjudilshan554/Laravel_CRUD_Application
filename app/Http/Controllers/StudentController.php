@@ -46,19 +46,19 @@ class StudentController extends Controller
     public function update(Request $request, $id){
 
         $updation=StudentFacade::update($request,$id);
-        
+ 
         if($updation == 1){
             // No problem :)
-            return response()->json(['status'=> '200','message'=> ':) Data Updated Successfully ']);
+            return response()->json(['status'=> '200','message'=> 'Data Updated Successfully']);
         }elseif($updation == 2){
             // client problem 
-            return response()->json(['status'=> '400','message'=> ':( Please upload your image or recheck whether the file type (PNG/JPEG)']);
+            return response()->json(['status'=> '400','message'=> 'Please upload your image or recheck whether the file type (PNG/JPEG)']);
         }elseif($updation == 3){
             // client problem
-            return response()->json(['status'=> '400','message'=> ':( Please upload valid images']);
+            return response()->json(['status'=> '400','message'=> 'Please upload valid images']);
         }elseif($updation == 4){
             // server problem
-            response()->json(['status'=> '500','message'=> ':) Data Updated Successfully']);
+            return response()->json(['status'=> '500','message'=> 'Data Updated Successfully']);
         }
         
     }
