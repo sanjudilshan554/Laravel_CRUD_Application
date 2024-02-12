@@ -94,7 +94,7 @@
                                             </div>
 
                                             <!-- Register Form -->
-                                            <form v-if="confirmGreen.status == 202"  @submit.prevent="NewStudent()">
+                                            <form v-if="confirmGreen.status == 202" @submit.prevent="NewStudent()">
                                                 <div class="profile ">
 
                                                     <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
@@ -142,7 +142,8 @@
                                             </form>
 
                                             <!-- Update Form -->
-                                            <form v-else-if="confirmGreen.status == 201" @submit.prevent="UpdateStudent(this.student.id)">
+                                            <form v-else-if="confirmGreen.status == 201"
+                                                @submit.prevent="UpdateStudent(this.student.id)">
                                                 <div class="profile ">
 
                                                     <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
@@ -174,16 +175,34 @@
 
                                                 <div class="row mt-3">
                                                     <div class="col-4 text-right">
-                                                        <label for="image" class=""> Upload your profile image:</label>
+                                                        <label for="image" class=""> profile image:</label>
                                                     </div>
                                                     <div class="col-6">
                                                         <input type="file" class="form-control" v-on:change="onImageChange"
                                                             ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
                                                     </div>
                                                 </div>
+
+                                                <div class="row mt-3">
+                                                    <div class="col-4 text-right">
+                                                        <label for="name">status:</label>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-check form-switch">
+                                                        <input class="form-check-input" v-model="student.status" type="checkbox" role="switch"
+                                                            id="flexSwitchCheckDefault"
+                                                            true-value="1" false-value="0">
+                                                        <label class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
+                                                    </div>
+                                                    </div>
+                                                    
+                                                </div>
+
                                                 <div class="modal-footer mt-2">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
+                                                    <div class="modal">
+                                                        <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal" >Close</button>
+                                                    </div>
                                                     <button type="submit" class="btn btn-primary">Update Student</button>
                                                 </div>
                                             </form>
@@ -227,7 +246,7 @@ export default {
                 name: '',
                 image: '',
                 age: '',
-                status: '',
+                status: 0,
             },
             previewImage: null,
 
@@ -237,9 +256,16 @@ export default {
 
             ShowImgSrc: '',
 
-            
+
         };
     },
+
+    computed:{
+        isStatusInactive(){
+            return this.student.status !==1;
+        }
+    },  
+
     methods: {
 
         async studenDetails() {
@@ -307,17 +333,17 @@ export default {
         },
 
         async EditStudent(id) {
-            try{
+            try {
                 const response = await axios.get(route('student.get_one', id));
                 this.student = response.data.data;
                 this.student.image = response.data.url;
                 this.ShowImgSrc = 1;
                 this.confirmGreen.status = 201;
                 this.confirmGreen.message = "Edit user data";
-                this.student.id=id;
-            }catch(error){
-                console.log('Error:',error);
-            }      
+                this.student.id = id;
+            } catch (error) {
+                console.log('Error:', error);
+            }
         },
 
         async showImgUsr() {
@@ -332,20 +358,20 @@ export default {
             this.ShowImgSrc = 0;
         },
 
-        async UpdateStudent(id){
-         
-            try{     
+        async UpdateStudent(id) {
+
+            try {
                 const config = {
                     headers: { "content-type": "multipart/form-data" },
                 };
 
-                const response = await axios.post(route('student.update',id),this.student ,config);
+                const response = await axios.post(route('student.update', id), this.student, config);
                 console.log(response);
                 this.DataReset();
                 this.studenDetails();
                 return response;
-            }catch(error){
-                console.log('Error:',error);
+            } catch (error) {
+                console.log('Error:', error);
             }
         }
     },
@@ -399,5 +425,25 @@ export default {
 
 .buttons {
     margin-left: 1vh;
+}
+
+.form-switch .form-check-input{
+    width: 2.5rem;
+    height: 1.2rem;
+}
+
+.form-switch .form-check-input:checked{
+    background-color: rgb(0, 241, 32);
+    border:none;
+}
+
+
+.form-switch .form-check-input:checked + .form-check-label::before {
+    background-color: #e70000; /* Change to your desired color */
+}
+
+.form-check-label{
+    color: #e70000;
+    margin-left: 1rem;
 }
 </style>

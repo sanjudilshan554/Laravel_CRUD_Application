@@ -84,10 +84,13 @@ class StudentService{
 
                     $student=$this->student->where('id',$id)->first();
 
+                    $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
+
                     $student->update([
                         'name' => $request->name,
                         'url' => 'http://127.0.0.1:8000/' .$url, //not comma 
                         'age' => $request->age,
+                        'status' => $status,
                     ]);
 
                     return 1;
@@ -101,6 +104,20 @@ class StudentService{
             }
 
         }else{
+            
+            // for image less profiles or previous profile updation
+
+            $student=$this->student->where('id',$id)->first();
+
+                    $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
+
+                    $student->update([
+                        'name' => $request->name,
+                        'url' => $request->url,
+                        'age' => $request->age,
+                        'status' => $status,
+                    ]);
+
             return 4;
         }
 

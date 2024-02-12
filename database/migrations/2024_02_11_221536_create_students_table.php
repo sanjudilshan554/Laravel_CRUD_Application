@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('url')->nullable();
             $table->integer('age')->nullable();
-            $table->integer('status')->default(0);
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
