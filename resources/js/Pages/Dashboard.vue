@@ -75,7 +75,7 @@
                                         <div class="modal-body row ">
                                             <div class="confirm_message text-center">
 
-                                                <div v-if="confirmGreen.status == 200" class="alert alert-success"
+                                                <div v-if="confirmGreen.status == 202" class="alert alert-success"
                                                     role="alert">
                                                     {{ confirmGreen.message }}
                                                 </div>
@@ -93,7 +93,8 @@
                                                 </div>
                                             </div>
 
-                                            <form @submit.prevent="NewStudent()">
+                                            <!-- Register Form -->
+                                            <form v-if="confirmGreen.status == 202"  @submit.prevent="NewStudent()">
                                                 <div class="profile ">
 
                                                     <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
@@ -140,12 +141,55 @@
                                                 </div>
                                             </form>
 
+                                            <!-- Update Form -->
+                                            <form v-else-if="confirmGreen.status == 201" @submit.prevent="UpdateStudent(this.student.id)">
+                                                <div class="profile ">
+
+                                                    <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
+                                                        :style="{ 'background-image': `url(${previewImage})` }"
+                                                        @click="selectImage"></div>
+                                                </div>
+                                                <div v-if="ShowImgSrc == 1" class="update_image_setup">
+                                                    <img :src="student.url" class="image_preview_for_update">
+                                                </div>
+
+                                                <div class="row mt-4">
+                                                    <div class="col-4 text-right label">
+                                                        <label for="name">Student name:</label>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input type="text" name="name" v-model="student.name"
+                                                            class="form-control" placeholder="enter student name" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-4 text-right">
+                                                        <label for="name">age:</label>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input type="text" name="name" v-model="student.age"
+                                                            class="form-control" placeholder="enter student age" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mt-3">
+                                                    <div class="col-4 text-right">
+                                                        <label for="image" class=""> Upload your profile image:</label>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input type="file" class="form-control" v-on:change="onImageChange"
+                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer mt-2">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Update Student</button>
+                                                </div>
+                                            </form>
                                         </div>
-
                                     </div>
-
                                 </div>
-
                             </div>
                         </section>
                     </section>
@@ -192,6 +236,8 @@ export default {
             confirmGreen: [],
 
             ShowImgSrc: '',
+
+            
         };
     },
     methods: {
@@ -228,6 +274,7 @@ export default {
 
                 // calling function to update page table
                 this.studenDetails();
+                this.confirmGreen.status = 202;
             } catch (error) {
                 console.log('Error:', error);
             }
@@ -237,7 +284,6 @@ export default {
             console.log(e.target.files[0]);
             this.student.image = e.target.files[0];
         },
-
 
         selectImage() {
             this.$refs.fileInput.click();
@@ -261,12 +307,17 @@ export default {
         },
 
         async EditStudent(id) {
-            const response = await axios.get(route('student.get_one', id));
-            this.student = response.data.data;
-            this.student.image = response.data.url;
-            this.ShowImgSrc = 1;
-            this.confirmGreen.status = 201;
-            this.confirmGreen.message = "Edit user data";
+            try{
+                const response = await axios.get(route('student.get_one', id));
+                this.student = response.data.data;
+                this.student.image = response.data.url;
+                this.ShowImgSrc = 1;
+                this.confirmGreen.status = 201;
+                this.confirmGreen.message = "Edit user data";
+                this.student.id=id;
+            }catch(error){
+                console.log('Error:',error);
+            }      
         },
 
         async showImgUsr() {
@@ -279,6 +330,23 @@ export default {
 
         async ChangeImageSetup() {
             this.ShowImgSrc = 0;
+        },
+
+        async UpdateStudent(id){
+         
+            try{     
+                const config = {
+                    headers: { "content-type": "multipart/form-data" },
+                };
+
+                const response = await axios.post(route('student.update',id),this.student ,config);
+                console.log(response);
+                this.DataReset();
+                this.studenDetails();
+                return response;
+            }catch(error){
+                console.log('Error:',error);
+            }
         }
     },
 };
@@ -296,7 +364,9 @@ export default {
     border-color: black;
     border: 2px solid #007bff;
     background-size: cover;
+
 }
+
 
 .image_preview_for_update {
     width: 150px;

@@ -24,7 +24,7 @@ Route::prefix('/student')->group(function () {
     Route::post('/store', [StudentController::class,'store'])->name('student.store');
     Route::get('{student_id}/delete', [StudentController::class,'delete'])->name('student.delete');
     Route::get('{student_id}/get_single', [StudentController::class,'get_single'])->name('student.get_one');
-
+    Route::post('{student_id}/update', [StudentController::class,'update'])->name('student.update');
 });
 
 

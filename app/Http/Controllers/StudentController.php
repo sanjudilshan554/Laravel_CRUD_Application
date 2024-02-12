@@ -20,43 +20,7 @@ class StudentController extends Controller
     }
 
     public function store(Request $request){
-
-        if($request->File('image')){
-        
-            $profile_image = $request->File('image');
-
-            if($profile_image->isValid()){
-                $name_generation= hexdec(uniqid());
-                $image_extention=strtolower($profile_image->getClientOriginalExtension());
-
-                if ($image_extention == 'png' || $image_extention == 'jpeg' || $image_extention == 'jpg'){
-                    $image_name= $name_generation . '.' . $image_extention;
-                    $upload_location =  'image/profile_images/';
-                    $url= $upload_location .$image_name;
-
-
-                    $profile_image->move(public_path($upload_location),$image_name);
-
-                    $this->student->create([
-                        'name' => $request->name,
-                        'url' => 'http://127.0.0.1:8000/' .$url, //not comma 
-                        
-                        'age' => $request->age,
-                    ]);
-
-                    return response()->json(['status'=>'200', 'message'=>'Data uploaded successfully']);
-
-                }else{
-                    return response()->json(['status'=> '500','message'=> 'Please upload your image or recheck whether the file type (PNG/JPEG)']);
-                }
-            }
-            else{
-                return response()->json(['status'=> '500','message'=> 'Please enter valid data']);
-            }
-
-        }else{
-            return response()->json(['status'=> '500','message'=> 'Please upload your image' ]);
-        }
+        return StudentFacade::store($request);
     }
 
     public function get_student(){
@@ -79,4 +43,22 @@ class StudentController extends Controller
         return response()->json(['message'=> 'data retrive successfully','status'=> '200','data'=> $student]);
     }
 
+    public function update(Request $request, $id){
+        $updation=StudentFacade::update($request,$id);
+        
+        if($updation == 1){
+            // No problem :)
+            return response()->json(['status'=> '200','message'=> ':) Data Updated Successfully ']);
+        }elseif($updation == 2){
+            // client problem 
+            return response()->json(['status'=> '400','message'=> ':( Please upload your image or recheck whether the file type (PNG/JPEG)']);
+        }elseif($updation == 3){
+            // client problem
+            return response()->json(['status'=> '400','message'=> ':( Please enter valid data']);
+        }elseif($updation == 4){
+            // server problem
+            response()->json(['status'=> '500','message'=> ':( Please upload your image' ]);
+        }
+        
+    }
 }
