@@ -17,38 +17,36 @@ class StudentService
 
     public function store($request)
     {
-
-
         $validated = $request->validate([
-            'name' => ['required',new NameValidationRule],
-            'age' => ['required',new AgeValidationRule],
+            'name' => ['required', new NameValidationRule],
+            'age' => ['required', new AgeValidationRule],
         ]);
 
-        if($validated){
+        if ($validated) {
             if ($request->File('image')) {
 
                 $profile_image = $request->File('image');
-    
+
                 if ($profile_image->isValid()) {
                     $name_generation = hexdec(uniqid());
                     $image_extention = strtolower($profile_image->getClientOriginalExtension());
-    
+
                     if ($image_extention == 'png' || $image_extention == 'jpeg' || $image_extention == 'jpg') {
                         $image_name = $name_generation . '.' . $image_extention;
                         $upload_location = 'image/profile_images/';
                         $url = $upload_location . $image_name;
-    
-    
+
+
                         $profile_image->move(public_path($upload_location), $image_name);
-    
+
                         $this->student->create([
                             'name' => $validated['name'],
                             'url' => 'http://127.0.0.1:8000/' . $url, //not comma 
                             'age' => $validated['age'],
                         ]);
-    
+
                         return response()->json(['status' => '200', 'message' => 'Data uploaded successfully']);
-    
+
                     } else {
                         return response()->json(['status' => '500', 'message' => 'Please upload your image or recheck whether the file type (PNG/JPEG/JPG)']);
                     }
@@ -65,8 +63,8 @@ class StudentService
 
                 return response()->json(['status' => '200', 'message' => 'Created new account successfully : Keep on mind to update profile image later']);
             }
-        }else{
-            return response()->json(['status'=> '400', 'message'=> 'Bad Data']);
+        } else {
+            return response()->json(['status' => '400', 'message' => 'Bad Data']);
         }
     }
 
@@ -88,60 +86,68 @@ class StudentService
 
     public function update($request, $id)
     {
+        $validated = $request->validate([
+            'name' => ['required', new NameValidationRule],
+            'age' => ['required', new AgeValidationRule],
+        ]);
 
-        if ($request->File('image')) {
+        if ($validated) {
+            if ($request->File('image')) {
 
-            $profile_image = $request->File('image');
+                $profile_image = $request->File('image');
 
-            if ($profile_image->isValid()) {
-                $name_generation = hexdec(uniqid());
-                $image_extention = strtolower($profile_image->getClientOriginalExtension());
+                if ($profile_image->isValid()) {
+                    $name_generation = hexdec(uniqid());
+                    $image_extention = strtolower($profile_image->getClientOriginalExtension());
 
-                if ($image_extention == 'png' || $image_extention == 'jpeg' || $image_extention == 'jpg') {
-                    $image_name = $name_generation . '.' . $image_extention;
-                    $upload_location = 'image/profile_images/';
-                    $url = $upload_location . $image_name;
+                    if ($image_extention == 'png' || $image_extention == 'jpeg' || $image_extention == 'jpg') {
+                        $image_name = $name_generation . '.' . $image_extention;
+                        $upload_location = 'image/profile_images/';
+                        $url = $upload_location . $image_name;
 
 
-                    $profile_image->move(public_path($upload_location), $image_name);
+                        $profile_image->move(public_path($upload_location), $image_name);
 
-                    $student = $this->student->where('id', $id)->first();
+                        $student = $this->student->where('id', $id)->first();
 
-                    $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
+                        $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
 
-                    $student->update([
-                        'name' => $request->name,
-                        'url' => 'http://127.0.0.1:8000/' . $url, //not comma 
-                        'age' => $request->age,
-                        'status' => $status,
-                    ]);
+                        $student->update([
+                            'name' => $request->name,
+                            'url' => 'http://127.0.0.1:8000/' . $url, //not comma 
+                            'age' => $request->age,
+                            'status' => $status,
+                        ]);
 
-                    return 1;
+                        return 1;
 
+                    } else {
+                        return 2;
+                    }
                 } else {
-                    return 2;
+                    return 3;
                 }
+
             } else {
-                return 3;
+
+                // for image less profiles or previous profile updation
+
+                $student = $this->student->where('id', $id)->first();
+
+                $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
+
+                $student->update([
+                    'name' => $request->name,
+                    'url' => $request->url,
+                    'age' => $request->age,
+                    'status' => $status,
+                ]);
+
+                return 4;
             }
-
-        } else {
-
-            // for image less profiles or previous profile updation
-
-            $student = $this->student->where('id', $id)->first();
-
-            $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
-
-            $student->update([
-                'name' => $request->name,
-                'url' => $request->url,
-                'age' => $request->age,
-                'status' => $status,
-            ]);
-
-            return 4;
         }
+
+
 
 
 

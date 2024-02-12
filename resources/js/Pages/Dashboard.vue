@@ -69,9 +69,9 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content ">
                                         <div class="modal-header">
-                                            <h5 v-if="confirmGreen.status == 202" class="modal-title"
-                                                id="exampleModalLabel">Add New Student</h5>
-                                            <h5 v-else-if="confirmGreen.status == 201" class="modal-title"
+                                            <h5 v-if="confirmGreen.title == 202" class="modal-title" id="exampleModalLabel">
+                                                Add New Student</h5>
+                                            <h5 v-else-if="confirmGreen.title == 201" class="modal-title"
                                                 id="exampleModalLabel">Edit Existing Student Details</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
@@ -91,7 +91,7 @@
                                                     role="alert">
                                                     {{ confirmGreen.message }}
                                                 </div>
-                                                <div v-else-if="confirmGreen.status == 203" class="alert alert-warning"
+                                                <div v-else-if="confirmGreen.status == 203" class="alert alert-success"
                                                     role="alert">
                                                     {{ confirmGreen.message }}
                                                 </div>
@@ -101,8 +101,8 @@
                                                 </div>
                                             </div>
 
-                                       
-                                                  
+
+
                                             <!-- Register Form -->
                                             <form v-if="confirmGreen.forms == 100" @submit.prevent="NewStudent()">
                                                 <div class="profile ">
@@ -302,34 +302,35 @@ export default {
         },
 
         async NewStudent() {
-          
+
             try {
                 const config = {
                     headers: { "content-type": "multipart/form-data" },
                 };
 
-                // post response to back end
-                await axios.post(route('student.store'), this.student, config).then((response) => {    
+                    // post response to back end
+                    await axios.post(route('student.store'), this.student, config).then((response) => {
                     this.confirmGreen.status = 202;
-                    this.studenDetails(); 
-                    this.confirmGreen.message=response.data.message;
-                    
+                    this.confirmGreen.title = 202;
+                    this.studenDetails();
+                    this.confirmGreen.message = response.data.message;
+
                 }).catch((error) => {
                     this.confirmGreen.status = 500;
-                    const message= error.response.data.message;
+                    const message = error.response.data.message;
                     this.errorMessageCenter(message);
                     this.confirmGreen.status == 202;
                     console.error(error.response.data.message);
-                 
+
                 });
             } catch (error) {
                 console.log('Error:', error);
             }
         },
 
-        errorMessageCenter(message){
+        errorMessageCenter(message) {
             this.confirmGreen.status = 500;
-            this.confirmGreen.message=message;
+            this.confirmGreen.message = message;
         },
 
         onImageChange(e) {
@@ -358,26 +359,33 @@ export default {
             this.studenDetails();
         },
 
+        EditSetup(id,response){
+            this.student = response.data.data;
+            this.student.image = response.data.url;
+            this.ShowImgSrc = 1;
+            this.confirmGreen.status = 201;
+            this.confirmGreen.forms = 50;
+            this.confirmGreen.title = 201;
+            this.confirmGreen.message = "Tips: You can update details with flexibility";
+        },
+
         async EditStudent(id) {
-         
+
             try {
                 const response = await axios.get(route('student.get_one', id));
-                this.student = response.data.data;
-                this.student.image = response.data.url;
-                this.ShowImgSrc = 1;
-                this.confirmGreen.status = 201;
-                this.confirmGreen.forms= 50;
-                this.confirmGreen.message = "Tips: You can update details with flexibility";
+                this.EditStudent(response);
                 this.student.id = id;
+
             } catch (error) {
                 console.log('Error:', error);
-               
+
             }
         },
 
         async showImgUsr() {
             this.ShowImgSrc = 0;
             this.confirmGreen.status = 202;
+            this.confirmGreen.title = 202;
             this.confirmGreen.forms = 100;
             this.confirmGreen.message = "Tips: Use appropriate file types.";
 
@@ -388,6 +396,13 @@ export default {
             this.ShowImgSrc = 0;
         },
 
+        DataUpdationSetup(message) {
+            this.studenDetails();
+            this.confirmGreen.status = 203;
+            this.confirmGreen.title = 201;
+            this.confirmGreen.message = message;
+        },
+
         async UpdateStudent(id) {
 
             try {
@@ -395,16 +410,17 @@ export default {
                     headers: { "content-type": "multipart/form-data" },
                 };
 
-                const response = await axios.post(route('student.update', id), this.student, config).then((response =>{
+                const response = await axios.post(route('student.update', id), this.student, config).then((response => {
                     console.log(response);
-                    this.studenDetails();
-                    this.confirmGreen.status = 203;
-                    this.confirmGreen.status = 201;
-                    this.confirmGreen.message = response.data.message;
-                })).catch((error)=>{
-                    console.error(response.data.error);
+                    const message = response.data.message;
+                    this.DataUpdationSetup(message);
+
+                })).catch((error) => {
+                    const message = error.response.data.message;
+                    this.errorMessageCenter(message)
+                    console.error(error.response.data.message);
                 });
-                
+
             } catch (error) {
                 console.log('Error:', error);
             }
@@ -425,9 +441,7 @@ export default {
     border-color: black;
     border: 2px solid #007bff;
     background-size: cover;
-
 }
-
 
 .image_preview_for_update {
     width: 150px;
@@ -475,7 +489,6 @@ export default {
 
 .form-switch .form-check-input:checked+.form-check-label::before {
     background-color: #e70000;
-    /* Change to your desired color */
 }
 
 .form-check-label {
@@ -491,14 +504,12 @@ export default {
     width: 4rem;
     height: 2rem;
     display: flex;
-    /* Added */
     align-items: center;
-    /* Added */
     justify-content: center;
-    /* Added */
     margin: auto;
 }
 
 .active-label {
     color: rgb(26, 102, 7);
-}</style>
+}
+</style>
