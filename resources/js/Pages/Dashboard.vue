@@ -1,13 +1,11 @@
 <template>
     <Head title="Dashboard" />
-
     <AuthenticatedLayout>
         <template #header>
             <div class="text-center">
                 <h1>Student Management System Dashboard</h1>
             </div>
         </template>
-
         <div class="py-12">
             <div class="max-w-14xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
