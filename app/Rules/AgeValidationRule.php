@@ -10,11 +10,11 @@ class AgeValidationRule implements Rule
  
     public function passes($attribute, $value){
 
-        return $value < 150;
+        return $value < 30;
     }
 
     public function message(){
-        return "the value must be contain numbers and less than 150";
+        return "Student age must be contain numbers and less than 30";
     }
 
 }

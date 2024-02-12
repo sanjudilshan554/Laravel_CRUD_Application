@@ -13,6 +13,6 @@ class NameValidationRule implements Rule
 
     // retrun error message 
     public function message(){
-        return "The value must be contain only letters";
+        return "Name must be contain only letters";
     }
 }

@@ -1,254 +1,243 @@
 <template>
-    <Head title="Dashboard" />
-    <AuthenticatedLayout>
-        <template #header>
+    <AppLayout>
+        <template #content>
             <div class="text-center">
                 <h1>Student Management System Dashboard</h1>
             </div>
-        </template>
-        <div class="py-12">
-            <div class="max-w-14xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <section class="p-3 container mainsection mt-5">
+                <!-- table -->
+                <section>
+                    <button type="button" class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        @click="showImgUsr()">
+                        Add New Student
+                    </button>
+                </section>
+                <section>
+                    <table class="table table-striped table-hover mt-5 text-center">
+                        <thead  class="table-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">uer id</th>
+                                <th scope="col">name</th>
+                                <th scope="col">image</th>
+                                <th scope="col">age</th>
+                                <th scope="col">status</th>
+                                <th scope="col">action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table_data">
+                            <tr v-for="(student, index) in students" class="table_data">
 
-                    <section class="p-3">
-                        <!-- table -->
-                        <section>
-                            <button type="button" class="btn btn-success mt-3" data-bs-toggle="modal"
-                                data-bs-target="#exampleModal" @click="showImgUsr()">
-                                Add New Student
-                            </button>
-                        </section>
-                        <section>
-                            <table class="table mt-5 text-center">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">uer id</th>
-                                        <th scope="col">name</th>
-                                        <th scope="col">image</th>
-                                        <th scope="col">age</th>
-                                        <th scope="col">status</th>
-                                        <th scope="col">action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table_data">
-                                    <tr v-for="(student, index) in students" class="table_data">
+                                <th class="align-middle " scope="row">{{ ++index }}</th>
+                                <td class="align-middle ">{{ student.id }}</td>
+                                <td class="align-middle ">{{ student.name }}</td>
+                                <td> <img :src="student.url" alt="profile image not setup"
+                                        class="profile_image align-middle ">
+                                </td>
+                                <td class="align-middle ">{{ student.age }}</td>
+                                <td class="align-middle status">
+                                    <span v-if="student.status == 1" class="badge rounded-pill bg-success sub">active</span>
+                                    <span v-else class="badge rounded-pill bg-secondary sub">inactive</span>
+                                </td>
+                                <td class="align-middle ">
 
-                                        <th class="align-middle " scope="row">{{ ++index }}</th>
-                                        <td class="align-middle ">{{ student.id }}</td>
-                                        <td class="align-middle ">{{ student.name }}</td>
-                                        <td> <img :src="student.url" alt="profile image not setup"
-                                                class="profile_image align-middle "></td>
-                                        <td class="align-middle ">{{ student.age }}</td>
-                                        <td class="align-middle status">
-                                            <span v-if="student.status == 1"
-                                                class="badge rounded-pill bg-success sub">active</span>
-                                            <span v-else class="badge rounded-pill bg-secondary sub">inactive</span>
-                                        </td>
-                                        <td class="align-middle ">
+                                    <button type="button" class="fa fa-pencil btn btn-primary buttons"
+                                        @click="EditStudent(student.id)" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">
+                                    </button>
 
-                                            <button type="button" class="fa fa-pencil btn btn-primary buttons"
-                                                @click="EditStudent(student.id)" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal">
-                                            </button>
+                                    <button class="fa fa-trash btn btn-danger buttons" @click="DeleteStudent(student.id)">
+                                    </button>
+                                </td>
 
-                                            <button class="fa fa-trash btn btn-danger buttons"
-                                                @click="DeleteStudent(student.id)">
-                                            </button>
-                                        </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
 
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </section>
+                <!-- Modal -->
+                <section>
+                    <div class="modal fade modal-xl" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content ">
+                                <div class="modal-header">
+                                    <h5 v-if="confirmGreen.title == 202" class="modal-title" id="exampleModalLabel">
+                                        Add New Student</h5>
+                                    <h5 v-else-if="confirmGreen.title == 201" class="modal-title" id="exampleModalLabel">
+                                        Edit
+                                        Existing Student Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body row ">
+                                    <div class="confirm_message text-center">
 
-                        <!-- Modal -->
-                        <section>
-                            <div class="modal fade modal-xl" id="exampleModal" tabindex="-1"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content ">
-                                        <div class="modal-header">
-                                            <h5 v-if="confirmGreen.title == 202" class="modal-title" id="exampleModalLabel">
-                                                Add New Student</h5>
-                                            <h5 v-else-if="confirmGreen.title == 201" class="modal-title"
-                                                id="exampleModalLabel">Edit Existing Student Details</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                        <div v-if="confirmGreen.status == 206" class="alert alert-info" role="alert">
+                                            {{ confirmGreen.message }}
                                         </div>
-                                        <div class="modal-body row ">
-                                            <div class="confirm_message text-center">
+                                        <div v-else-if="confirmGreen.status == 500" class="alert alert-danger" role="alert">
+                                            {{ confirmGreen.message }}
+                                        </div>
+                                        <div v-else-if="confirmGreen.status == 201" class="alert alert-warning"
+                                            role="alert">
+                                            {{ confirmGreen.message }}
+                                        </div>
+                                        <div v-else-if="confirmGreen.status == 203" class="alert alert-success"
+                                            role="alert">
+                                            {{ confirmGreen.message }}
+                                        </div>
+                                        <div v-else class="alert alert-primary " role="alert" value="Insert your data">
+                                            {{ confirmGreen.message }}
+                                        </div>
+                                    </div>
 
-                                                <div v-if="confirmGreen.status == 206" class="alert alert-info"
-                                                    role="alert">
-                                                    {{ confirmGreen.message }}
-                                                </div>
-                                                <div v-else-if="confirmGreen.status == 500" class="alert alert-danger"
-                                                    role="alert">
-                                                    {{ confirmGreen.message }}
-                                                </div>
-                                                <div v-else-if="confirmGreen.status == 201" class="alert alert-warning"
-                                                    role="alert">
-                                                    {{ confirmGreen.message }}
-                                                </div>
-                                                <div v-else-if="confirmGreen.status == 203" class="alert alert-success"
-                                                    role="alert">
-                                                    {{ confirmGreen.message }}
-                                                </div>
-                                                <div v-else class="alert alert-primary " role="alert"
-                                                    value="Insert your data">
-                                                    {{ confirmGreen.message }}
+
+
+                                    <!-- Register Form -->
+                                    <form v-if="confirmGreen.forms == 100" @submit.prevent="NewStudent()">
+                                        <div class="profile ">
+
+                                            <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
+                                                :style="{ 'background-image': `url(${previewImage})` }"
+                                                @click="selectImage">
+                                            </div>
+                                        </div>
+                                        <div v-if="ShowImgSrc == 1" class="update_image_setup">
+                                            <img :src="student.url" class="image_preview_for_update">
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-4 text-right label">
+                                                <label for="name">Student name:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" name="name" v-model="student.name" class="form-control"
+                                                    placeholder="enter student name" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-4 text-right">
+                                                <label for="name">age:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" name="name" v-model="student.age" class="form-control"
+                                                    placeholder="enter student age" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col-4 text-right">
+                                                <label for="image" class=""> Upload your profile image:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="file" class="form-control" v-on:change="onImageChange"
+                                                    ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer mt-2">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Create</button>
+
+                                        </div>
+                                    </form>
+
+                                    <!-- Update Form -->
+                                    <form v-else-if="confirmGreen.forms == 50"
+                                        @submit.prevent="UpdateStudent(this.student.id)">
+                                        <div class="profile ">
+
+                                            <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
+                                                :style="{ 'background-image': `url(${previewImage})` }"
+                                                @click="selectImage">
+                                            </div>
+                                        </div>
+                                        <div v-if="ShowImgSrc == 1" class="update_image_setup">
+                                            <img :src="student.url" class="image_preview_for_update">
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-4 text-right label">
+                                                <label for="name">Student name:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" name="name" v-model="student.name" class="form-control"
+                                                    placeholder="enter student name" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-4 text-right">
+                                                <label for="name">age:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="text" name="name" v-model="student.age" class="form-control"
+                                                    placeholder="enter student age" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col-4 text-right">
+                                                <label for="image" class=""> profile image:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="file" class="form-control" v-on:change="onImageChange"
+                                                    ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col-4 text-right">
+                                                <label for="name">status:</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" v-model="student.status" type="checkbox"
+                                                        role="switch" id="flexSwitchCheckDefault" true-value="1"
+                                                        false-value="0">
+                                                    <!-- <label v-show="!student.status" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
+                                                        <label v-show="student.status" class="form-check-label" for="flexSwitchCheckDefault">Active modde</label> -->
+                                                    <label v-if="student.status == 0" class="form-check-label"
+                                                        for="flexSwitchCheckDefault">The user's status is inactive
+                                                        by default.</label>
+                                                    <label v-else class="form-check-label active-label"
+                                                        for="flexSwitchCheckDefault">Active mode</label>
                                                 </div>
                                             </div>
 
-
-
-                                            <!-- Register Form -->
-                                            <form v-if="confirmGreen.forms == 100" @submit.prevent="NewStudent()">
-                                                <div class="profile ">
-
-                                                    <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
-                                                        :style="{ 'background-image': `url(${previewImage})` }"
-                                                        @click="selectImage"></div>
-                                                </div>
-                                                <div v-if="ShowImgSrc == 1" class="update_image_setup">
-                                                    <img :src="student.url" class="image_preview_for_update">
-                                                </div>
-
-                                                <div class="row mt-4">
-                                                    <div class="col-4 text-right label">
-                                                        <label for="name">Student name:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <input type="text" name="name" v-model="student.name"
-                                                            class="form-control" placeholder="enter student name" required>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-3">
-                                                    <div class="col-4 text-right">
-                                                        <label for="name">age:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <input type="text" name="name" v-model="student.age"
-                                                            class="form-control" placeholder="enter student age" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mt-3">
-                                                    <div class="col-4 text-right">
-                                                        <label for="image" class=""> Upload your profile image:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <input type="file" class="form-control" v-on:change="onImageChange"
-                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer mt-2">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Create</button>
-
-                                                </div>
-                                            </form>
-
-                                            <!-- Update Form -->
-                                            <form v-else-if="confirmGreen.forms == 50"
-                                                @submit.prevent="UpdateStudent(this.student.id)">
-                                                <div class="profile ">
-
-                                                    <div v-if="ShowImgSrc == 0" class="imagePreviewWrapper mt-4"
-                                                        :style="{ 'background-image': `url(${previewImage})` }"
-                                                        @click="selectImage"></div>
-                                                </div>
-                                                <div v-if="ShowImgSrc == 1" class="update_image_setup">
-                                                    <img :src="student.url" class="image_preview_for_update">
-                                                </div>
-
-                                                <div class="row mt-4">
-                                                    <div class="col-4 text-right label">
-                                                        <label for="name">Student name:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <input type="text" name="name" v-model="student.name"
-                                                            class="form-control" placeholder="enter student name" required>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-3">
-                                                    <div class="col-4 text-right">
-                                                        <label for="name">age:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <input type="text" name="name" v-model="student.age"
-                                                            class="form-control" placeholder="enter student age" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mt-3">
-                                                    <div class="col-4 text-right">
-                                                        <label for="image" class=""> profile image:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <input type="file" class="form-control" v-on:change="onImageChange"
-                                                            ref="fileInput" @input="pickFile" @click="ChangeImageSetup()" />
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mt-3">
-                                                    <div class="col-4 text-right">
-                                                        <label for="name">status:</label>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" v-model="student.status"
-                                                                type="checkbox" role="switch" id="flexSwitchCheckDefault"
-                                                                true-value="1" false-value="0">
-                                                            <!-- <label v-show="!student.status" class="form-check-label" for="flexSwitchCheckDefault">The user's status is inactive by default.</label>
-                                                        <label v-show="student.status" class="form-check-label" for="flexSwitchCheckDefault">Active modde</label> -->
-                                                            <label v-if="student.status == 0" class="form-check-label"
-                                                                for="flexSwitchCheckDefault">The user's status is inactive
-                                                                by default.</label>
-                                                            <label v-else class="form-check-label active-label"
-                                                                for="flexSwitchCheckDefault">Active mode</label>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="modal-footer mt-2">
-                                                    <div class="modal">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Close</button>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Update Student</button>
-                                                </div>
-                                            </form>
                                         </div>
-                                    </div>
+
+                                        <div class="modal-footer mt-2">
+                                            <div class="modal">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update Student</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                        </section>
-                    </section>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </template>
+    </AppLayout>
 </template>
 
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-
-// 
-
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 </script>
 
 <script>
 import axios from 'axios';
+import AppLayout from '@/Layouts/App.vue';
+
 export default {
 
     components: {
-
+        AppLayout
     },
 
     created() {
@@ -308,10 +297,11 @@ export default {
                     headers: { "content-type": "multipart/form-data" },
                 };
 
-                    // post response to back end
-                    await axios.post(route('student.store'), this.student, config).then((response) => {
-                    this.confirmGreen.status = 202;
+                // post response to back end
+                await axios.post(route('student.store'), this.student, config).then((response) => {
+                    this.confirmGreen.status = 203;
                     this.confirmGreen.title = 202;
+                    
                     this.studenDetails();
                     this.confirmGreen.message = response.data.message;
 
@@ -359,21 +349,17 @@ export default {
             this.studenDetails();
         },
 
-        EditSetup(id,response){
-            this.student = response.data.data;
-            this.student.image = response.data.url;
-            this.ShowImgSrc = 1;
-            this.confirmGreen.status = 201;
-            this.confirmGreen.forms = 50;
-            this.confirmGreen.title = 201;
-            this.confirmGreen.message = "Tips: You can update details with flexibility";
-        },
-
         async EditStudent(id) {
 
             try {
                 const response = await axios.get(route('student.get_one', id));
-                this.EditStudent(response);
+                this.student = response.data.data;
+                this.student.image = response.data.url;
+                this.ShowImgSrc = 1;
+                this.confirmGreen.status = 201;
+                this.confirmGreen.forms = 50;
+                this.confirmGreen.title = 201;
+                this.confirmGreen.message = "Tips: You can update details with flexibility";
                 this.student.id = id;
 
             } catch (error) {
@@ -511,5 +497,4 @@ export default {
 
 .active-label {
     color: rgb(26, 102, 7);
-}
-</style>
+}</style>
