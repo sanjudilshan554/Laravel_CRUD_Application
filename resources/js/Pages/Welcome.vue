@@ -16,10 +16,9 @@
                 </ul>
         
                 <div>
-            
-                    <a href="/login" class="btn btn-outline-success btn-sm logbtn pub">Login</a> 
-                    <a href="/register" class="regbtn pub btn btn-outline-dark btn-sm">Register</a>
-               
+                    <Link href="/login" class="btn btn-outline-success btn-sm logbtn pub">Login</Link> 
+                    <Link href="/register" class="regbtn pub btn btn-outline-dark btn-sm">Register</Link>
+         
         </div>
             </div>
         </div>
@@ -38,8 +37,14 @@
 </template>
 
 <script >
+import { Link } from '@inertiajs/vue3'
 
 export default {
+
+    components:{
+        Link
+    },  
+
     data() {
         return {
             isLoggedIn: false,

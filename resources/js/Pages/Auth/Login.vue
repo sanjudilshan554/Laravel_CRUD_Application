@@ -32,19 +32,25 @@ const submit = () => {
 </script>
 
 <template>
-
-    <div class="card">
-        
+    <div class="card">  
     <GuestLayout>
+        <!-- back to home -->
+        <section>
+                <Link href="/" class="fa-solid fa-arrow-left back_btn"></Link>
+        </section>
+        
+        <!-- header section -->
         <Head title="Log in" />
         <h3 class="text-center">Login </h3>
-
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
 
+        <!-- login form  -->
         <div class="mt-5">
             <form @submit.prevent="submit">
+
+            <!-- upper section -->
             <div>
                 <div class="row mb-3">
                     <div class="col-3">
@@ -59,7 +65,6 @@ const submit = () => {
                         required
                         autofocus
                         autocomplete="username"/>
-
                     <InputError class="mt-2" :message="form.errors.email" />
                     </div>
                 </div>
@@ -77,45 +82,38 @@ const submit = () => {
                         autocomplete="current-password"
                         :class="form-control"
                         />
-
                         <InputError class="mt-2" :message="form.errors.password" />
                     </div>
                 </div>
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
+                <!-- below section -->
+                <div class="block mt-4">
+                    <label class="flex items-center">
+                        <Checkbox name="remember" v-model:checked="form.remember" />
+                        <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                </div>
+                <div class="flex items-center justify-end mt-4">
+                    <Link
+                        v-if="canResetPassword"
+                        :href="route('password.request')"
+                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Forgot your password?
+                    </Link>
+                    <PrimaryButton class="ms-4 btn btn-dark" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Log in
+                    </PrimaryButton>
+                </div>
+            </form>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4 btn btn-dark" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
         </div>
-       
     </GuestLayout>
 </div>
 </template>
 
+<!-- ajust the view of bootstrap form -->
 <style>
-
-.card{
-    box-shadow: 1px 1px 5px black;
-}
-
 .inputs{
     width:40vh;
     font-size: small;
