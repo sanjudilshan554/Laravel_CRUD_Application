@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Rule;
 class NameValidationRule implements Rule
 {
     
-    // check whether the passed values are less than 30 character and are they only string 
+    // check whether the passed values are minimun 15 character and string 
     public function passes($attribute, $value){
         return !preg_match('/[0-9]/', $value) && strlen($value) <15 ;
     }

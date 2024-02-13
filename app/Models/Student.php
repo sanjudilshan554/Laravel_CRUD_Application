@@ -9,6 +9,7 @@ class Student extends Model
 {
     use HasFactory;
 
+    // student values
     protected $fillable = [
         'name',
         'url',
@@ -16,10 +17,12 @@ class Student extends Model
         'status',
     ];
 
+    // delete student recode 
     public function deleteStudent($id){
         return $this->where('id', $id)->delete();
     }
 
+    // get single student recode
     public function get_single($id){
         return $this->where('id', $id)->first();
     }

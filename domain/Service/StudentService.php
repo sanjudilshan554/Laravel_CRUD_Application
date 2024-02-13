@@ -7,38 +7,47 @@ use App\Rules\NameValidationRule;
 
 class StudentService
 {
-
+    // variable creation
     protected $student;
 
+    // creation constructor to initialize object of model
     public function __construct()
     {
         $this->student = new Student();
     }
 
+    // store new student details
     public function store($request)
     {
+        // check the validation with validation rules
         $validated = $request->validate([
             'name' => ['required', new NameValidationRule],
             'age' => ['required', new AgeValidationRule],
         ]);
 
+        // if validation are succeed
         if ($validated) {
+
+            // check whether request has image file or not
             if ($request->File('image')) {
 
-                $profile_image = $request->File('image');
+                $profile_image = $request->File('image'); //get the image
 
+                // check it validation
                 if ($profile_image->isValid()) {
-                    $name_generation = hexdec(uniqid());
-                    $image_extention = strtolower($profile_image->getClientOriginalExtension());
 
+                    $name_generation = hexdec(uniqid()); //name generation
+                    $image_extention = strtolower($profile_image->getClientOriginalExtension()); //extesion taken
+
+                    // check the extesion , assigning path and full fill image image.jpeg
                     if ($image_extention == 'png' || $image_extention == 'jpeg' || $image_extention == 'jpg') {
                         $image_name = $name_generation . '.' . $image_extention;
                         $upload_location = 'image/profile_images/';
                         $url = $upload_location . $image_name;
 
-
                         $profile_image->move(public_path($upload_location), $image_name);
 
+                        // store validated data
                         $this->student->create([
                             'name' => $validated['name'],
                             'url' => 'http://127.0.0.1:8000/' . $url, //not comma 
@@ -53,8 +62,10 @@ class StudentService
                 } else {
                     return response()->json(['status' => '500', 'message' => 'Image validation fail']);
                 }
+                // if user not insert profile image
             } else {
 
+                // store validated data
                 $this->student->create([
                     'name' => $validated['name'],
                     'url' => '',
@@ -68,22 +79,26 @@ class StudentService
         }
     }
 
+    // get all student details
     public function get()
     {
         return $this->student->all();
     }
 
+    // delete unique student
     public function delete($id)
     {
-        return $this->student->deleteStudent($id);
+        return $this->student->deleteStudent($id); //calling to model
         // return $this->student->where('id', $id)->delete();
     }
 
+    // get unique student
     public function get_single($id)
     {
         return $this->student->get_single($id);
     }
 
+    // update unique student
     public function update($request, $id)
     {
         $validated = $request->validate([
@@ -119,30 +134,29 @@ class StudentService
                             'status' => $status,
                         ]);
 
+                        //this  numbers will send response according to the return number
                         return 1;
-
                     } else {
                         return 2;
                     }
                 } else {
                     return 3;
                 }
-
             } else {
 
-                // for image less profiles or previous profile updation
-
+                // for non image profiles or previous profile updation
                 $student = $this->student->where('id', $id)->first();
 
+                // filter boolean as actual boolean 0/1
                 $status = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
 
+                //update validated student
                 $student->update([
-                    'name' => $request->name,
+                    'name' => $validated['name'],
                     'url' => $request->url,
-                    'age' => $request->age,
+                    'age' => $validated['age'],
                     'status' => $status,
                 ]);
-
                 return 4;
             }
         }
