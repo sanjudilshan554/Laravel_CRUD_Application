@@ -8,7 +8,7 @@ class NameValidationRule implements Rule
     
     // check whether the passed values are minimun 15 character and string 
     public function passes($attribute, $value){
-        return !preg_match('/[0-9]/', $value) && strlen($value) <15 ;
+        return !preg_match('/[0-9]\s]/', $value) && strlen($value) <15 ;
     }
 
     // retrun error message 

@@ -17,9 +17,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Route::get('/',[StudentController::class,'index'])->name('dashboard');
-
+// web routing group of student
 Route::prefix('/student')->group(function () {
     Route::get('/get', [StudentController::class,'get_student'])->name('student.get');
     Route::post('/store', [StudentController::class,'store'])->name('student.store');

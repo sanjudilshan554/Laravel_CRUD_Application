@@ -41,7 +41,7 @@ const submit = () => {
                         <div class="col-7">
                             <TextInput id="name" type="text" class="mt-1 block w-full form-control setups"
                                 v-model="form.name" required autofocus autocomplete="name" />
-                            <InputError class="mt-2" :message="form.errors.name" />
+                            <InputError class="mt-2 error" :message="form.errors.name" />
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -51,7 +51,7 @@ const submit = () => {
                         <div class="col-7">
                             <TextInput id="email" type="email" class="mt-1 block w-full form-control setups"
                                 v-model="form.email" required autocomplete="username" />
-                            <InputError class="mt-2" :message="form.errors.email" />
+                            <InputError class="mt-2 error" :message="form.errors.email" />
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -68,7 +68,7 @@ const submit = () => {
                         <div class="col-5">
                             <InputLabel for="password_confirmation" value="Confirm Password:" />
                         </div>
-                        <div class="col-6">
+                        <div class="col-7">
                             <TextInput id="password_confirmation" type="password"
                                 class="mt-1 block w-full form-control setups" v-model="form.password_confirmation" required
                                 autocomplete="new-password" />
@@ -101,10 +101,17 @@ const submit = () => {
 </script>
 
 
-<style>
+<style scoped>
+.error {
+    color: red;
+}
+
+.inputs{
+    font-size: small;
+}
 /* form controll adjustments */
 .setups {
-    width: 35vh;
+    margin: auto;
     font-size: smaller;
 }
 
@@ -119,5 +126,9 @@ const submit = () => {
     background: none;
     border: none;
     text-decoration: none;
+}
+
+.inputs{
+    font-size: small;
 }
 </style>
