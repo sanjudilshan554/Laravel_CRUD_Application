@@ -32,44 +32,55 @@ const submit = () => {
 </script>
 
 <template>
+
+    <div class="card">
+        
     <GuestLayout>
         <Head title="Log in" />
+        <h3 class="text-center">Login </h3>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
 
-        <div class="card">
+        <div class="mt-5">
             <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <InputLabel for="email" value="Email:" />
+                    </div>
+                    <div class="col-9 ">
+                        <TextInput
+                        id="email"
+                        type="email"
+                        class="form-control inputs"
+                        v-model="form.email"
+                        required
+                        autofocus
+                        autocomplete="username"/>
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                    <InputError class="mt-2" :message="form.errors.email" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <InputLabel for="password" value="Password:" />
+                    </div>
+                    <div class="col-9">
+                        <TextInput
+                        id="password"
+                        type="password"
+                        class="form-control inputs"
+                        v-model="form.password"
+                        required
+                        autocomplete="current-password"
+                        :class="form-control"
+                        />
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                        <InputError class="mt-2" :message="form.errors.password" />
+                    </div>
+                </div>
             </div>
 
             <div class="block mt-4">
@@ -88,7 +99,7 @@ const submit = () => {
                     Forgot your password?
                 </Link>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <PrimaryButton class="ms-4 btn btn-dark" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </PrimaryButton>
             </div>
@@ -96,4 +107,17 @@ const submit = () => {
         </div>
        
     </GuestLayout>
+</div>
 </template>
+
+<style>
+
+.card{
+    box-shadow: 1px 1px 5px black;
+}
+
+.inputs{
+    width:40vh;
+    font-size: small;
+}
+</style>
