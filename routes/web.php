@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Foundation\Application;
@@ -27,7 +28,7 @@ Route::prefix('/student')->group(function () {
     Route::post('{student_id}/update', [StudentController::class,'update'])->name('student.update');
 });
 
-
+Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

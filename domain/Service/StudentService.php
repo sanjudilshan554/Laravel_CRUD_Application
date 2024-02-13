@@ -146,11 +146,5 @@ class StudentService
                 return 4;
             }
         }
-
-
-
-
-
     }
-
 }

@@ -24,7 +24,9 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('login'), {
-        onFinish: () => form.reset('password'),
+        onFinish: ()=> {
+            localStorage.setItem('isLoggedIn', 'true');
+        },
     });
 };
 </script>
@@ -37,7 +39,8 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
+        <div class="card">
+            <form @submit.prevent="submit">
             <div>
                 <InputLabel for="email" value="Email" />
 
@@ -90,5 +93,7 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
+        </div>
+       
     </GuestLayout>
 </template>

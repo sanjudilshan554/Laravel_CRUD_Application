@@ -13,8 +13,8 @@
                     </li> -->
                 </ul>
         
-                    <div class="">
-                        <ResponsiveNavLink :href="route('profile.edit')" class="btn btn-info btn-sm mainbtn m-2"> Profile </ResponsiveNavLink>
+                    <div class="btnTxt">
+                        <ResponsiveNavLink :href="route('profile.edit')" class="btn btn-info btn-sm mainbtn "> Profile </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('logout')" method="post" as="button" class="btn btn-danger btn-sm mainbtn">
                             Log Out
                         </ResponsiveNavLink>
@@ -42,6 +42,19 @@ export default {
 
 .mainbtn{
    color:white;
-   padding-left:2vh;
+   margin-left:2vh;
+   text-align: center;
+   align-items: center;
+   justify-content: center;
+   display: flex;
+   box-shadow: 1px 1px 2px rgb(133, 122, 122);
+}
+
+.mainbtn:hover{
+    box-shadow: 1px 1px 3px rgb(29, 27, 27);
+}
+
+.btnTxt{
+    display: flex;
 }
 </style>

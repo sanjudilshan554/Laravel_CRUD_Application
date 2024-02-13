@@ -226,9 +226,6 @@
 </template>
 
 
-<script setup>
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-</script>
 
 <script>
 import axios from 'axios';
@@ -246,6 +243,7 @@ export default {
 
     data() {
         return {
+
             student: {
                 id: '',
                 name: '',
@@ -271,6 +269,7 @@ export default {
     },
 
     methods: {
+
 
         async studenDetails() {
             try {
